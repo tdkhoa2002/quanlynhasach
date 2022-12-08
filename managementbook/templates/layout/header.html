@@ -1,0 +1,54 @@
+<div id="header" class="container">
+    <div>
+        <a href="{{ url_for('index') }}"><img src="../../static/image/logo.png" alt=""></a>
+        <form action="{{ url_for('search_book') }}">
+            <div class="input-group mb-3">
+              <input type="text" class="form-control" name="keyword" placeholder="Tìm kiếm" aria-label="Recipient's username" aria-describedby="basic-addon2">
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="submit">Button</button>
+              </div>
+            </div>
+        </form>
+        <ul>
+            {% if current_user.is_authenticated %}
+            <h1>{{ current_user.username }}</h1>
+            <li>
+                <a href="">
+                    {% if current_user.avatar %}
+                    <img class="rounded-circle" src="{{ current_user.avatar }}" width="30" alt="{{ current_user.username }}">
+                    {% else %}
+                    <img src="{{ url_for('static', filename='images/flask.png') }}" width="30" alt="">
+                    {% endif %}
+                    {{ current_user.name }}
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('cart') }}">Xem giỏ hàng</a>
+            </li>
+            <li>
+                <a href="{{ url_for('user_logout') }}">Đăng xuất</a>
+            </li>
+            {% else %}
+            <li>
+                <a href="{{ url_for('user_login') }}">Đăng nhập</a>
+            </li>
+            <li>
+                <a href="{{ url_for('user_register') }}">Đăng ký</a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+
+    <div>
+        <ul>
+            <li>
+                <a href="{{ url_for('index') }}">Tất cả sản phẩm</a>
+            </li>
+            {% for category in categories %}
+            <li>
+                <a href="/category/{{ category.id }}"> {{ category.name }} </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
