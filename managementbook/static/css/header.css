@@ -1,0 +1,46 @@
+ul.service-user li {
+    list-style: none;
+}
+
+ul.service-user li a {
+    color: black;
+}
+
+
+#header .header-user {
+    background-color:  #e6e6e6;
+    padding: 20px 100px;
+}
+
+#header > div {
+    display: flex;
+    justify-content: space-around;
+    align-items: center
+}
+
+#header div form {
+    margin-top: 20px
+}
+
+
+#header div form div input.search {
+    width: 450px;
+
+}
+
+
+#header > div > a img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
+
+#header > div ul.service-user {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#header > div ul.service-user li {
+    margin-right: 30px;
+}

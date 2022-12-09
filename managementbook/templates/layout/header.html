@@ -1,17 +1,18 @@
-<div id="header" class="container">
-    <div>
-        <a href="{{ url_for('index') }}"><img src="../../static/image/logo.png" alt=""></a>
+<div id="header" class="">
+    <div class="header-user">
+        <a href="{{ url_for('index') }}">
+            <img src="../../static/image/logo.png" alt="">
+        </a>
         <form action="{{ url_for('search_book') }}">
             <div class="input-group mb-3">
-              <input type="text" class="form-control" name="keyword" placeholder="Tìm kiếm" aria-label="Recipient's username" aria-describedby="basic-addon2">
+              <input type="text" class="form-control search" name="keyword" placeholder="Tìm kiếm" aria-label="Recipient's username" aria-describedby="basic-addon2">
               <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="submit">Button</button>
+                <button class="btn btn-outline-secondary" type="submit">Tìm kiếm</button>
               </div>
             </div>
         </form>
-        <ul>
+        <ul class="service-user">
             {% if current_user.is_authenticated %}
-            <h1>{{ current_user.username }}</h1>
             <li>
                 <a href="">
                     {% if current_user.avatar %}
@@ -23,7 +24,7 @@
                 </a>
             </li>
             <li>
-                <a href="{{ url_for('cart') }}">Xem giỏ hàng</a>
+                <a href="{{ url_for('cart') }}"><i class="fa-solid fa-cart-shopping"></i></a>
             </li>
             <li>
                 <a href="{{ url_for('user_logout') }}">Đăng xuất</a>
