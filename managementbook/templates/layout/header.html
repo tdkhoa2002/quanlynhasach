@@ -24,9 +24,6 @@
                 </a>
             </li>
             <li>
-                <a href="{{ url_for('cart') }}"><i class="fa-solid fa-cart-shopping"></i></a>
-            </li>
-            <li>
                 <a href="{{ url_for('user_logout') }}">Đăng xuất</a>
             </li>
             {% else %}
@@ -37,19 +34,21 @@
                 <a href="{{ url_for('user_register') }}">Đăng ký</a>
             </li>
             {% endif %}
+            <li>
+                <a href="{{ url_for('cart') }}"><i class="fa-solid fa-cart-shopping"> <span class="cart-counter">{{ cart_stats.total_quantity }}</span></i></a>
+            </li>
         </ul>
     </div>
 
-    <div>
-        <ul>
-            <li>
-                <a href="{{ url_for('index') }}">Tất cả sản phẩm</a>
-            </li>
-            {% for category in categories %}
-            <li>
-                <a href="/category/{{ category.id }}"> {{ category.name }} </a>
-            </li>
-            {% endfor %}
-        </ul>
+    <div class="dropdown">
+          <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Danh mục sản phẩm
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item" href="{{ url_for('index') }}">Tất cả sản phẩm</a>
+              {% for category in categories %}
+                <a class="dropdown-item" href="/category/{{ category.id }}"> {{ category.name }} </a>
+              {% endfor %}
+          </div>
     </div>
 </div>

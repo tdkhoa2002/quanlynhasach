@@ -28,7 +28,7 @@ def get_user_by_id(user_id):
     return User.query.get(user_id)
 
 
-def load_cates():
+def load_categories():
     return Category.query.all()
 
 
@@ -54,3 +54,17 @@ def get_category_by_id(category_id):
 
 def find_book_by_kw(keyword=None):
     return Book.query.filter(Book.name.contains(keyword))
+
+
+def cart_stats(cart):
+    total_amount, total_quantity = 0, 0
+
+    if cart:
+        for c in cart.values():
+            total_quantity += c['quantity']
+            total_amount += c['quantity'] * c['price']
+
+    return {
+        "total_amount": total_amount,
+        "total_quantity": total_quantity
+    }

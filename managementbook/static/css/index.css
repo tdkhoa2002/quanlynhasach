@@ -2,11 +2,15 @@
     font-family: Tahoma;
 }
 
+a {
+    color: black;
+}
+
 body {
 }
 
 .container {
-    margin-width: 1170px
+    margin-width: 1170px;
 }
 
 h1.subject {

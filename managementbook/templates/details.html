@@ -31,14 +31,10 @@
                         <div class="col-lg-12">
                             <p class="tag-section"><strong>Thể loại: </strong><a href="/category/{{category.id}}">{{ category }}</a></p>
                         </div>
-                        <div class="col-lg-12">
-                            <h6>Số lượng: </h6>
-                            <input type="number" class="form-control text-center w-100" value="1">
-                        </div>
                         <div class="col-lg-12 mt-3">
                             <div class="row">
                                 <div class="col-lg-6 pb-2">
-                                    <a href="#" class="btn btn-danger w-100">Thêm vào giỏ hàng</a>
+                                    <a href="{{ url_for('add_to_cart') }}" onclick="addToCart({{ book.id }}, '{{ book.name }}', {{ book.price }})" class="btn btn-danger w-100">Thêm vào giỏ hàng</a>
                                 </div>
                             </div>
                         </div>

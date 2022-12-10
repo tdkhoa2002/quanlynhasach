@@ -1,37 +1,3 @@
-# import controllers
-# import utils
-# from managementbook import app, login
-#
-#
-# @app.add_url_rule("/", "index", controllers.index)
-# @app.add_url_rule("/books/<int:book_id>", "book-detail", controllers.details)
-# @app.add_url_rule("/category/<int:category_id>", "categories", controllers.category_books)
-# @app.add_url_rule("/register", "register", controllers.user_register, methods=['GET', 'POST'])
-# @app.add_url_rule("/login", "login", controllers.user_login, methods=['GET', 'POST'])
-# @app.add_url_rule("/user-logout", "logout", controllers.logout_user)
-# @app.add_url_rule("/admin-login", "admin-login", controllers.admin_login, methods=['POST'])
-# @app.add_url_rule("/cart", "cart", controllers.cart)
-# @app.add_url_rule("/api/cart", "add-cart", controllers.add_to_cart, methods=["POST"])
-# @app.context_processor
-# def common_response():
-#     categories = utils.load_categories()
-#     books = utils.load_books()
-#     return {
-#         'categories': categories,
-#         'books': books,
-#     }
-#
-#
-# @login.user_loader
-# def user_load(user_id):
-#     return utils.get_user_by_id(user_id)
-#
-#
-# if __name__ == '__main__':
-#     from managementbook.admin import *
-#
-#     app.run(debug=True)
-
 from flask import render_template, request, redirect, url_for, session, jsonify
 from managementbook import app, login
 from managementbook.models import UserRole
@@ -40,7 +6,6 @@ import utils
 import cloudinary.uploader
 
 
-@app.route("/")
 def index():
     keyword = request.args.get('keyword')
     books_index = utils.load_books_index()
@@ -49,20 +14,17 @@ def index():
                            books_index=books_index)
 
 
-@app.route('/books/<int:book_id>')
 def details(book_id):
     b = utils.get_product_by_id(book_id)
     cate = utils.get_category_by_id(b.category_id)
     return render_template('details.html', book=b, category=cate)
 
 
-@app.route('/category/<int:category_id>')
 def category_books(category_id):
     books = utils.get_product_by_category(category_id)
     return render_template('categories.html', books=books)
 
 
-@app.route('/search', methods=['get', 'POST'])
 def search_book():
     if request.method.__eq__('POST'):
         keyword = request.form.get('keyword')
@@ -70,7 +32,6 @@ def search_book():
     return keyword
 
 
-@app.route('/register', methods=['get', 'post'])
 def user_register():
     err_msg = ""
     if request.method.__eq__('POST'):
@@ -98,7 +59,6 @@ def user_register():
     return render_template('register.html', err_msg=err_msg)
 
 
-@app.route('/login', methods=['get', 'post'])
 def user_login():
     err_msg = ""
     if request.method.__eq__('POST'):
@@ -114,13 +74,11 @@ def user_login():
     return render_template('login.html', err_msg=err_msg)
 
 
-@app.route('/user-logout')
 def user_logout():
     logout_user()
     return redirect(url_for('user_login'))
 
 
-@app.route('/admin-login', methods=['post'])
 def admin_login():
     if request.method.__eq__('POST'):
         username = request.form.get('username')
@@ -134,18 +92,15 @@ def admin_login():
         return redirect("/admin")
 
 
-@app.route('/cart')
 def cart():
-    return render_template('cart.html',
-                           stats=utils.cart_stats(session['cart']))
+    return render_template('cart.html')
 
 
-@app.route('/api/cart', methods=['post'])
 def add_to_cart():
     data = request.json
     id = str(data['id'])
 
-    key = app.config['CART_KEY']  # 'cart'
+    key = app.config['CART_KEY']
     cart = session[key] if key in session else {}
     if id in cart:
         cart[id]['quantity'] += 1
@@ -160,28 +115,11 @@ def add_to_cart():
             "quantity": 1
         }
 
-    session[key] = cart
+        session[key] = cart
 
-    return jsonify(utils.cart_stats(cart=cart))
-
-
-@app.context_processor
-def common_response():
-    categories = utils.load_categories()
-    books = utils.load_books()
-    return {
-        'categories': categories,
-        'books': books,
-        'cart_stats': utils.cart_stats(session.get(app.config['CART_KEY']))
-    }
-
-
-@login.user_loader
-def user_load(user_id):
-    return utils.get_user_by_id(user_id=user_id)
+        return jsonify()
 
 
 if __name__ == '__main__':
     from managementbook.admin import *
-
     app.run(debug=True)
