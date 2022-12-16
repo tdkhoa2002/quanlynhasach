@@ -9,6 +9,8 @@ app.secret_key = 'super secret key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:dangkhoa1101@localhost/qlns?charset=utf8mb4'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 app.config['CART_KEY'] = 'cart'
+app.config['SO_LUONG_NHAP'] = 150
+app.config['SO_LUONG_Ton'] = 300
 
 db = SQLAlchemy(app=app)
 
@@ -19,5 +21,6 @@ cloudinary.config (
     secure= True
 )
 
+login_manager = LoginManager()
 
 login = LoginManager(app=app)

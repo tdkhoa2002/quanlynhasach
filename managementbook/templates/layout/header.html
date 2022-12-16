@@ -1,9 +1,9 @@
 <div id="header" class="">
     <div class="header-user">
         <a href="{{ url_for('index') }}">
-            <img src="../../static/image/logo.png" alt="">
+            <img src="https://res.cloudinary.com/de3yhowd4/image/upload/v1670816756/z3952981598846_ad4ef04150b1e85054292876a3f8a72e_sbv01e.jpg" alt="">
         </a>
-        <form action="{{ url_for('search_book') }}">
+        <form action="/">
             <div class="input-group mb-3">
               <input type="text" class="form-control search" name="keyword" placeholder="Tìm kiếm" aria-label="Recipient's username" aria-describedby="basic-addon2">
               <div class="input-group-append">
@@ -18,11 +18,16 @@
                     {% if current_user.avatar %}
                     <img class="rounded-circle" src="{{ current_user.avatar }}" width="30" alt="{{ current_user.username }}">
                     {% else %}
-                    <img src="{{ url_for('static', filename='images/flask.png') }}" width="30" alt="">
+                    <img src="https://res.cloudinary.com/de3yhowd4/image/upload/v1670817128/user-default_dzjczj.png" width="30" alt="">
                     {% endif %}
                     {{ current_user.name }}
                 </a>
             </li>
+            {% if current_user.username == "admin" %}
+            <li>
+                <a href="/admin">Admin page</a>
+            </li>
+            {% endif %}
             <li>
                 <a href="{{ url_for('user_logout') }}">Đăng xuất</a>
             </li>
@@ -35,7 +40,7 @@
             </li>
             {% endif %}
             <li>
-                <a href="{{ url_for('cart') }}"><i class="fa-solid fa-cart-shopping"> <span class="cart-counter">{{ cart_stats.total_quantity }}</span></i></a>
+                <a href="{{ url_for('cart') }}"><i class="fa-solid fa-cart-shopping"> <span class="cart-counter">{{ cart.total_quantity }}</span></i></a>
             </li>
         </ul>
     </div>
@@ -52,3 +57,4 @@
           </div>
     </div>
 </div>
+

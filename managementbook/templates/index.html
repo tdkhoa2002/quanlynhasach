@@ -3,11 +3,12 @@
 {% block title %} Open BookStore {% endblock %}
 
 {% block content %}
+<h3>{{ msg }}</h3>
 <div class="row">
         <div class="col-lg-8 mx-auto">
             <!-- List group-->
             <ul class="list-group shadow">
-                {% for book in books_index %}
+                {% for book in books %}
                 <!-- list group item-->
                 <li class="list-group-item">
                     <!-- Custom content-->

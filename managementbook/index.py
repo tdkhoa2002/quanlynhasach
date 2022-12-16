@@ -35,39 +35,37 @@
 from flask import render_template, request, redirect, url_for, session, jsonify
 from managementbook import app, login
 from managementbook.models import UserRole
-from flask_login import login_user, logout_user
-import utils
+from flask_login import login_user, logout_user, login_required
+from managementbook.decorators import annonymous_user
+import utils, pdb
 import cloudinary.uploader
 
 
 @app.route("/")
 def index():
+    msg = ""
+    category_id = request.args.get('category_id')
     keyword = request.args.get('keyword')
-    books_index = utils.load_books_index()
+
+    books = utils.load_books(category_id=category_id, keyword=keyword)
+
+    if not books:
+        msg = "Không tìm thấy sách!"
 
     return render_template('index.html',
-                           books_index=books_index)
+                           books=books, msg=msg)
 
 
 @app.route('/books/<int:book_id>')
 def details(book_id):
     b = utils.get_product_by_id(book_id)
-    cate = utils.get_category_by_id(b.category_id)
-    return render_template('details.html', book=b, category=cate)
+    return render_template('details.html', book=b)
 
 
 @app.route('/category/<int:category_id>')
 def category_books(category_id):
-    books = utils.get_product_by_category(category_id)
+    books = utils.load_books(category_id, keyword=None)
     return render_template('categories.html', books=books)
-
-
-@app.route('/search', methods=['get', 'POST'])
-def search_book():
-    if request.method.__eq__('POST'):
-        keyword = request.form.get('keyword')
-
-    return keyword
 
 
 @app.route('/register', methods=['get', 'post'])
@@ -77,6 +75,7 @@ def user_register():
         name = request.form.get('name')
         username = request.form.get('username')
         email = request.form.get('email')
+        phone = request.form.get('phone')
         password = request.form.get('password')
         confirm = request.form.get('confirm-password')
         avatar_path = None
@@ -88,7 +87,7 @@ def user_register():
                     res = cloudinary.uploader.upload(avatar)
                     avatar_path = res['secure_url']
 
-                utils.add_user(name=name, username=username, password=password, email=email, avatar=avatar_path)
+                utils.add_user(name=name, username=username, phone=phone, password=password, email=email, avatar=avatar_path)
                 return redirect(url_for('index'))
             else:
                 err_msg = "Xác nhận mật khẩu không đúng"
@@ -99,13 +98,14 @@ def user_register():
 
 
 @app.route('/login', methods=['get', 'post'])
+@annonymous_user
 def user_login():
     err_msg = ""
     if request.method.__eq__('POST'):
         username = request.form.get('username')
         password = request.form.get('password')
 
-        user = utils.check_user_login(username=username, password=password, role=UserRole.user)
+        user = utils.check_user_login(username=username, password=password)
         if user:
             login_user(user=user)
             return redirect(url_for('index'))
@@ -136,8 +136,7 @@ def admin_login():
 
 @app.route('/cart')
 def cart():
-    return render_template('cart.html',
-                           stats=utils.cart_stats(session['cart']))
+    return render_template('cart.html')
 
 
 @app.route('/api/cart', methods=['post'])
@@ -152,17 +151,61 @@ def add_to_cart():
     else:
         name = data['name']
         price = data['price']
-
+        image = data['image']
         cart[id] = {
             "id": id,
             "name": name,
             "price": price,
+            "image": image,
             "quantity": 1
         }
 
     session[key] = cart
 
     return jsonify(utils.cart_stats(cart=cart))
+
+
+@app.route('/api/cart/<book_id>', methods=['PUT'])
+def update_cart(book_id):
+    key = app.config['CART_KEY']  # 'cart'
+    cart = session.get(key)
+
+    if cart and book_id in cart:
+        cart[book_id]['quantity'] = int(request.json['quantity'])
+
+    session[key] = cart
+
+    return jsonify(utils.cart_stats(cart=cart))
+
+
+@app.route('/api/cart/<book_id>', methods=['DELETE'])  # /api/cart/${book_id}
+def delete_cart(book_id):
+    key = app.config['CART_KEY'] # 'cart'
+    cart = session.get(key)
+
+    if cart and book_id in cart:
+        del cart[book_id]
+
+    session[key] = cart
+
+    return jsonify(utils.cart_stats(cart=cart))
+
+
+@app.route("/api/pay")
+@login_required
+def pay():
+    key = app.config['CART_KEY']  # 'cart'
+    cart = session.get(key)
+
+    try:
+        utils.save_receipt(cart)
+    except Exception as ex:
+        print(str(ex))
+        return jsonify({'status': 500})
+    else:
+        del session[key]
+
+    return jsonify({'status': 200})
 
 
 @app.context_processor
@@ -172,7 +215,7 @@ def common_response():
     return {
         'categories': categories,
         'books': books,
-        'cart_stats': utils.cart_stats(session.get(app.config['CART_KEY']))
+        'cart': utils.cart_stats(session.get(app.config['CART_KEY']))
     }
 
 

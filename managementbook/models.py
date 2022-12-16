@@ -39,6 +39,7 @@ class Book(BaseModel):
     active = Column(Boolean, default=True)
     created_date = Column(DateTime, default=datetime.now())
     category_id = Column(Integer, ForeignKey(Category.id), nullable=False)
+    receipt_details = relationship('ReceiptDetails', backref='book', lazy=True)
 
     def __str__(self):
         return self.name
@@ -50,12 +51,24 @@ class User(BaseModel, UserMixin):
     password = Column(String(50), nullable=False)
     avatar = Column(String(100))
     email = Column(String(50))
+    phone = Column(String(10), nullable=False, unique=True)
     active = Column(Boolean, default=True)
     joined_date = Column(DateTime, default=datetime.now())
     user_role = Column(Enum(UserRole), default=UserRole.user)
+    receipts = relationship('Receipt', backref='user', lazy=True)
 
-    def __str__(self):
-        return self.name
+
+class Receipt(BaseModel):
+    created_date = Column(DateTime, default=datetime.now())
+    details = relationship('ReceiptDetails', backref='receipt', lazy=True)
+    user_id = Column(Integer, ForeignKey(User.id), nullable=False)
+
+
+class ReceiptDetails(BaseModel):
+    quantity = Column(Integer, default=0)
+    price = Column(Float, default=0)
+    book_id = Column(Integer, ForeignKey(Book.id), nullable=False)
+    receipt_id = Column(Integer, ForeignKey(Receipt.id), nullable=False)
 
 
 if __name__ == '__main__':
@@ -90,6 +103,7 @@ if __name__ == '__main__':
         password = str(hashlib.md5('123123'.encode('utf-8')).hexdigest())
         u = User(name="Admin",
                  username="admin",
+                 phone="0123456789",
                  password=password,
                  email="admin123@gmail.com",
                  user_role=UserRole.admin,
