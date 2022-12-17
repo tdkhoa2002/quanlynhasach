@@ -7,6 +7,9 @@ ul.service-user li a {
 }
 
 
+a.dropdown-item {
+    color:black;
+}
 
 
 #header .header-user {
@@ -14,7 +17,7 @@ ul.service-user li a {
     padding: 20px 100px;
 }
 
-#header > div {
+#header > div.header-user {
     display: flex;
     justify-content: space-around;
     align-items: center
@@ -46,8 +49,13 @@ ul.service-user li a {
     margin-right: 30px;
 }
 
-.dropdown {
-    position: absolute;
-    left: 386px;
-    top: 100px;
+#menu {
+    display: flex;
+    background-color: #007bff;
+    padding: 0 205px;
+}
+
+#menu > div button a {
+    text-decoration: none;
+    color: white;
 }

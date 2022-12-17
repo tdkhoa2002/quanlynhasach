@@ -120,20 +120,6 @@ def user_logout():
     return redirect(url_for('user_login'))
 
 
-@app.route('/admin-login', methods=['post'])
-def admin_login():
-    if request.method.__eq__('POST'):
-        username = request.form.get('username')
-        password = request.form.get('password')
-
-        user = utils.check_user_login(username=username, password=password, role=UserRole.admin)
-
-        if user:
-            login_user(user=user)
-
-        return redirect("/admin")
-
-
 @app.route('/cart')
 def cart():
     return render_template('cart.html')

@@ -31,10 +31,10 @@ class Category(BaseModel):
 class Book(BaseModel):
     __tablename__ = 'book'
 
-    name = Column(String(30), nullable=False)
+    name = Column(String(100), nullable=False)
     price = Column(Float, default=0)
     description = Column(String(255))
-    image = Column(String(100))
+    image = Column(String(200))
     author = Column(String(100), nullable=True)
     active = Column(Boolean, default=True)
     created_date = Column(DateTime, default=datetime.now())
@@ -90,15 +90,36 @@ if __name__ == '__main__':
                      category_id=1)
         p3 = Book(name='Gấu anh gấu em - tập 8', description='mô tả 3', price=27000, author="Thái Bá Tân",
                      image='https://res.cloudinary.com/de3yhowd4/image/upload/v1669606785/gauanh-gauem-tap8_gwtvgs.jpg',
-                     category_id=2)
+                     category_id=1)
         p4 = Book(name='Gấu anh gấu em - tập 7', description='mô tả 4', price=27000, author="Thái Bá Tân",
                      image='https://res.cloudinary.com/de3yhowd4/image/upload/v1669606884/gauanhgauem-tap7_gqbtib.webp',
-                     category_id=2)
+                     category_id=1)
         p5 = Book(name='Trẻ con có phải siêu nhân đâu', description='mô tả 4', price=27000, author="Thái Bá Tân",
                      image='https://res.cloudinary.com/de3yhowd4/image/upload/v1669607005/sachvanhocvietnam_adsrpn.webp',
-                     category_id=3)
+                     category_id=2)
+        p6 = Book(name='Dế mèn phiêu lưu ký', description='mô tả 4', price=27000, author="Thái Bá Tân",
+                  image='https://res.cloudinary.com/de3yhowd4/image/upload/v1671198205/de-men-phieu-luu-ky-_13x19_bia_tb2019-1_306f580015064449ae2aa6db2f05a6b7_large_svngxv.jpg',
+                  category_id=2)
+        p7 = Book(name='Phòng thiết kế', description='mô tả 4', price=27000, author="Thái Bá Tân",
+                  image='https://res.cloudinary.com/de3yhowd4/image/upload/v1671198196/1_8b2c4187760845c2a79b31ddb44def57_large_kenusq.jpg',
+                  category_id=2)
+        p8 = Book(name='Những bài diễn văn làm thay đổi thế giới', description='mô tả 4', price=27000, author="Thái Bá Tân",
+                  image='https://res.cloudinary.com/de3yhowd4/image/upload/v1671198139/nhung-bai-dien-van-lam-thay-doi-the-gioi_bia-1_7ae332181a444ac5911d06c7f066f410_large_rttrzz.jpg',
+                  category_id=2)
+        p9 = Book(name='Siêu thông minh', description='mô tả 4', price=27000, author="Thái Bá Tân",
+                  image='https://res.cloudinary.com/de3yhowd4/image/upload/v1671198196/sieu-thong-minh-tu-duy_xa-hoi-hoc_52be9ef2039c4dddb53f94b23d7e269e_large_g1tode.webp',
+                  category_id=3)
+        p10 = Book(name='Một nửa của thế giới', description='mô tả 4', price=27000, author="Thái Bá Tân",
+                  image='https://res.cloudinary.com/de3yhowd4/image/upload/v1671198139/mot-nua-cua-the-gioi_355acaa917f944aaa915d6d52f82bea7_large_heta52.webp',
+                  category_id=3)
+        p11 = Book(name='Sự hình thành của thế giới', description='mô tả 4', price=27000, author="Thái Bá Tân",
+                  image='https://res.cloudinary.com/de3yhowd4/image/upload/v1671198093/su-sinh-thanh-the-gioi_622ef45f13a2438899e450bb4228d48f_master_nzipng.webp',
+                  category_id=3)
+        p12 = Book(name='Đất nước gấm hoa', description='mô tả 4', price=27000, author="Thái Bá Tân",
+                  image='https://res.cloudinary.com/de3yhowd4/image/upload/v1671198139/dat-nuoc-gam-hoa---bia_0ffe3dbcbff248f49887a556b86b5502_large_lmmvdj.webp',
+                  category_id=3)
 
-        db.session.add_all([p1, p2, p3, p4, p5])
+        db.session.add_all([p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12])
 
         password = str(hashlib.md5('123123'.encode('utf-8')).hexdigest())
         u = User(name="Admin",

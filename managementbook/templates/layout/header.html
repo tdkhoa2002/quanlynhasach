@@ -44,9 +44,12 @@
             </li>
         </ul>
     </div>
-
-    <div class="dropdown">
-          <button class="btn btn-danger dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <div id="menu">
+        <div>
+            <button class="btn btn-primary"><a href="/">Home</a></button>
+        </div>
+        <div class="dropdown">
+          <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Danh mục sản phẩm
           </button>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -55,6 +58,8 @@
                 <a class="dropdown-item" href="/category/{{ category.id }}"> {{ category.name }} </a>
               {% endfor %}
           </div>
+        </div>
     </div>
+
 </div>
 

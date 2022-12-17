@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from flask_babelex import Babel
 import cloudinary
 
 
@@ -24,3 +25,10 @@ cloudinary.config (
 login_manager = LoginManager()
 
 login = LoginManager(app=app)
+
+babel = Babel(app=app)
+
+
+@babel.localeselector
+def load_locale():
+    return 'vi'

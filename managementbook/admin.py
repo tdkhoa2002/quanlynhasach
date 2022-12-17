@@ -74,21 +74,9 @@ class ProductView(ModelView):
     def is_accessible(self):
         return current_user.is_authenticated
 
+
 class CategoryView(ModelView):
-    # column_searchable_list = ['name', 'description']
-    # column_filters = ['name', 'price']
-    can_view_details = True
     can_export = True
-    # column_exclude_list = ['image']
-    # column_labels = {
-    #     'name': 'Tên sản phẩm',
-    #     'description': 'Mô tả',
-    #     'price': 'Gía'
-    # }
-    # extra_js = ['//cdn.ckeditor.com/4.6.0/standard/ckeditor.js']
-    # form_overrides = {
-    #     'description': CKTextAreaField
-    # }
 
     def is_accessible(self):
         return current_user.is_authenticated
@@ -98,4 +86,4 @@ admin = Admin(app=app, name='Nhà sách OU', template_mode='bootstrap4', index_v
 admin.add_view(CategoryView(Category, db.session, name="Danh mục"))
 admin.add_view(ProductView(Book, db.session, name="Thực hiện tác vụ sách"))
 admin.add_view(StatsView(name="Thống kê"))
-admin.add_view(LogoutView(name="Logout"))
+admin.add_view(LogoutView(name="Đăng xuất"))
