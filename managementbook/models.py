@@ -77,7 +77,7 @@ class Comment(BaseModel):
     content = Column(String(255), nullable=False)
     created_date = Column(DateTime, default=datetime.now())
     user_id = Column(Integer, ForeignKey(User.id), nullable=False)
-    book_id = Column(Integer, ForeignKey(Book.id), nullable=False)
+    book_id = Column(Integer, ForeignKey(Book.id), nullable=True)
 
 
 if __name__ == '__main__':
