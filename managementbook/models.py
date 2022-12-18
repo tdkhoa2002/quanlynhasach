@@ -40,6 +40,7 @@ class Book(BaseModel):
     created_date = Column(DateTime, default=datetime.now())
     category_id = Column(Integer, ForeignKey(Category.id), nullable=False)
     receipt_details = relationship('ReceiptDetails', backref='book', lazy=True)
+    comments = relationship('Comment', backref='book', lazy=True)
 
     def __str__(self):
         return self.name
@@ -56,6 +57,7 @@ class User(BaseModel, UserMixin):
     joined_date = Column(DateTime, default=datetime.now())
     user_role = Column(Enum(UserRole), default=UserRole.user)
     receipts = relationship('Receipt', backref='user', lazy=True)
+    comments = relationship('Comment', backref='user', lazy=True)
 
 
 class Receipt(BaseModel):
@@ -69,6 +71,13 @@ class ReceiptDetails(BaseModel):
     price = Column(Float, default=0)
     book_id = Column(Integer, ForeignKey(Book.id), nullable=False)
     receipt_id = Column(Integer, ForeignKey(Receipt.id), nullable=False)
+
+
+class Comment(BaseModel):
+    content = Column(String(255), nullable=False)
+    created_date = Column(DateTime, default=datetime.now())
+    user_id = Column(Integer, ForeignKey(User.id), nullable=False)
+    book_id = Column(Integer, ForeignKey(Book.id), nullable=False)
 
 
 if __name__ == '__main__':
@@ -130,6 +139,10 @@ if __name__ == '__main__':
                  user_role=UserRole.admin,
                  avatar="https://res.cloudinary.com/de3yhowd4/image/upload/v1669481858/dxyigbm1fnl2dmokkeh2.jpg")
         db.session.add(u)
+        cmt1 = Comment(content='Sach nay hay qua', user_id=1, book_id=1)
+        cmt2 = Comment(content='Xung dang de mua', user_id=1, book_id=1)
+
+        db.session.add_all([cmt1, cmt2])
         db.session.commit()
 
 

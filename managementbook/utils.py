@@ -2,7 +2,7 @@ from flask_login import current_user
 from sqlalchemy import func
 
 from managementbook import db, app
-from managementbook.models import User, UserRole, Category, Book, Receipt, ReceiptDetails
+from managementbook.models import User, UserRole, Category, Book, Receipt, ReceiptDetails, Comment
 import hashlib
 
 
@@ -20,9 +20,9 @@ def add_user(name, username, phone, password, **kwargs):
 
 
 def stats_revenue(kw=None, from_date=None, to_date=None):
-    query = db.session.query(Book.id, Book.name, func.sum(ReceiptDetails.quantity*ReceiptDetails.price))\
-                      .join(ReceiptDetails, ReceiptDetails.book_id.__eq__(Book.id))\
-                      .join(Receipt, ReceiptDetails.receipt_id.__eq__(Receipt.id))
+    query = db.session.query(Book.id, Book.name, func.sum(ReceiptDetails.quantity * ReceiptDetails.price)) \
+        .join(ReceiptDetails, ReceiptDetails.book_id.__eq__(Book.id)) \
+        .join(Receipt, ReceiptDetails.receipt_id.__eq__(Receipt.id))
 
     if kw:
         query = query.filter(Book.name.contains(kw))
@@ -37,9 +37,9 @@ def stats_revenue(kw=None, from_date=None, to_date=None):
 
 
 def count_product_by_cate():
-    return db.session.query(Category.id, Category.name, func.count(Book.id))\
-             .join(Book, Book.category_id.__eq__(Category.id), isouter=True)\
-             .group_by(Category.id).all()
+    return db.session.query(Category.id, Category.name, func.count(Book.id)) \
+        .join(Book, Book.category_id.__eq__(Category.id), isouter=True) \
+        .group_by(Category.id).all()
 
 
 def check_user_login(username, password):
@@ -104,3 +104,14 @@ def save_receipt(cart):
             db.session.add(d)
 
         db.session.commit()
+
+
+def load_comments(book_id):
+    return Comment.query.filter(Comment.book_id.__eq__(book_id)).order_by(-Comment.id).all()
+
+
+def save_comment(content, book_id):
+    cmt = Comment(content=content, book_id=book_id, user=current_user)
+    db.session.add(cmt)
+    db.session.commit()
+    return cmt

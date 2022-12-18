@@ -20,7 +20,7 @@
                             <p class="m-0 p-0">{{ book.name }}</p>
                         </div>
                         <div class="col-lg-12">
-                            <p class="m-0 p-0 price-pro">{{ book.price }}</p>
+                            <p class="m-0 p-0 price-pro">{{ "{:,.0f}".format(book.price) }} VNĐ</p>
                             <hr class="p-0 m-0">
                         </div>
                         <div class="col-lg-12 pt-2">
@@ -49,4 +49,32 @@
         </div>
     </div>
 </div>
+<hr>
+{% if current_user.is_authenticated %}
+<div style="margin-top: 545px;">
+    <div class="form-group">
+        <textarea class="form-control" id="comment-content" placeholder="Nội dung bình luận"></textarea>
+    </div>
+    <div class="mt-1">
+        <input type="button" onclick="addComment({{ book.id }})" value="Thêm bình luận" class="btn btn-info" />
+    </div>
+</div>
+{% else %}
+<div id="comment-box">
+    <p>Vui lòng <a href="/login?next=/products/{{ book.id }}" style="text-decoration: none; color: red;">đăng nhập</a> để bình luận!</p>
+    {% endif %}
+    <div class="spinner-grow text-primary spinner"></div>
+    <div class="mt-2">
+        <ul class="list-group" id="comments"></ul>
+    </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="{{ url_for('static', filename='js/details.js') }}"></script>
+<script>
+    window.onload = () => {
+        loadComments({{ book.id }})
+    }
+</script>
 {% endblock %}

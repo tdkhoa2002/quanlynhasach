@@ -87,7 +87,8 @@ def user_register():
                     res = cloudinary.uploader.upload(avatar)
                     avatar_path = res['secure_url']
 
-                utils.add_user(name=name, username=username, phone=phone, password=password, email=email, avatar=avatar_path)
+                utils.add_user(name=name, username=username, phone=phone, password=password, email=email,
+                               avatar=avatar_path)
                 return redirect(url_for('index'))
             else:
                 err_msg = "Xác nhận mật khẩu không đúng"
@@ -166,7 +167,7 @@ def update_cart(book_id):
 
 @app.route('/api/cart/<book_id>', methods=['DELETE'])  # /api/cart/${book_id}
 def delete_cart(book_id):
-    key = app.config['CART_KEY'] # 'cart'
+    key = app.config['CART_KEY']  # 'cart'
     cart = session.get(key)
 
     if cart and book_id in cart:
@@ -175,6 +176,45 @@ def delete_cart(book_id):
     session[key] = cart
 
     return jsonify(utils.cart_stats(cart=cart))
+
+
+@app.route('/api/books/<book_id>/comments')  # /api/products/<book_id>/comments
+def comments(book_id):
+    data = []
+    for cmt in utils.load_comments(book_id=book_id):
+        data.append({
+            'id': cmt.id,
+            'content': cmt.content,
+            'created_date': str(cmt.created_date),
+            'user': {
+                'name': cmt.user.name,
+                'avatar': cmt.user.avatar
+            }
+        })
+
+    return jsonify(data)
+
+
+@app.route('/api/books/<book_id>/comments', methods=['post'])
+def add_comment(book_id):
+    try:
+        c = utils.save_comment(book_id=book_id, content=request.json['content'])
+
+    except:
+        return jsonify({'status': 500})
+
+    return jsonify({
+        'status': 204,
+        'comment': {
+            'id': c.id,
+            'content': c.content,
+            'created_date': str(c.created_date),
+            'user': {
+                'name': c.user.name,
+                'avatar': c.user.avatar
+            }
+        }
+    })
 
 
 @app.route("/api/pay")
