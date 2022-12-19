@@ -1,13 +1,12 @@
 from flask import session
-from managementbook import app, login, controllers
-
+from managementbook import app, login, controllers, utils, admin
 
 app.add_url_rule("/", "index", controllers.index)
 app.add_url_rule("/books/<int:book_id>", "book-detail", controllers.details)
 app.add_url_rule("/category/<int:category_id>", "categories", controllers.category_books)
-app.add_url_rule("/register", "register", controllers.user_register, methods=['GET', 'POST'])
-app.add_url_rule("/login", "login", controllers.user_login, methods=['GET', 'POST'])
-app.add_url_rule("/user-logout", "logout", controllers.logout_user)
+app.add_url_rule("/register", 'register-user', controllers.user_register, methods=['GET', 'POST'])
+app.add_url_rule("/login", 'user-login', controllers.user_login, methods=['GET', 'POST'])
+app.add_url_rule('/logout', 'logout', controllers.logout_my_user)
 app.add_url_rule("/cart", "cart", controllers.cart)
 app.add_url_rule("/api/cart", "add-cart", controllers.add_to_cart, methods=["POST"])
 app.add_url_rule('/api/cart/<book_id>', "update_cart", controllers.update_cart, methods=['PUT'])
@@ -34,6 +33,4 @@ def user_load(user_id):
 
 
 if __name__ == '__main__':
-    from managementbook.admin import *
-
     app.run(debug=True)

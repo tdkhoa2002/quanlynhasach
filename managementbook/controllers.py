@@ -1,13 +1,11 @@
-from flask import render_template, request, redirect, url_for, session, jsonify
-from managementbook import app, login
-from managementbook.models import UserRole
-from flask_login import login_user, logout_user, login_required
-from managementbook.decorators import annonymous_user
-import utils, pdb
 import cloudinary.uploader
+from flask import render_template, request, redirect, url_for, session, jsonify
+from flask_login import login_user, logout_user, login_required
+
+from managementbook import app, utils
+from managementbook.decorators import annonymous_user
 
 
-@app.route("/")
 def index():
     msg = ""
     category_id = request.args.get('category_id')
@@ -22,19 +20,16 @@ def index():
                            books=books, msg=msg)
 
 
-@app.route('/books/<int:book_id>')
 def details(book_id):
     b = utils.get_product_by_id(book_id)
     return render_template('details.html', book=b)
 
 
-@app.route('/category/<int:category_id>')
 def category_books(category_id):
     books = utils.load_books(category_id, keyword=None)
     return render_template('categories.html', books=books)
 
 
-@app.route('/register', methods=['get', 'post'])
 def user_register():
     err_msg = ""
     if request.method.__eq__('POST'):
@@ -64,7 +59,6 @@ def user_register():
     return render_template('register.html', err_msg=err_msg)
 
 
-@app.route('/login', methods=['get', 'post'])
 @annonymous_user
 def user_login():
     err_msg = ""
@@ -81,18 +75,15 @@ def user_login():
     return render_template('login.html', err_msg=err_msg)
 
 
-@app.route('/user-logout')
-def user_logout():
+def logout_my_user():
     logout_user()
-    return redirect(url_for('user_login'))
+    return redirect('/login')
 
 
-@app.route('/cart')
 def cart():
     return render_template('cart.html')
 
 
-@app.route('/api/cart', methods=['post'])
 def add_to_cart():
     data = request.json
     id = str(data['id'])

@@ -63,20 +63,20 @@ class User(BaseModel, UserMixin):
 class Receipt(BaseModel):
     created_date = Column(DateTime, default=datetime.now())
     details = relationship('ReceiptDetails', backref='receipt', lazy=True)
-    user_id = Column(Integer, ForeignKey(User.id), nullable=False)
+    user_id = Column(Integer, ForeignKey(User.id), nullable=True)
 
 
 class ReceiptDetails(BaseModel):
     quantity = Column(Integer, default=0)
     price = Column(Float, default=0)
-    book_id = Column(Integer, ForeignKey(Book.id), nullable=False)
-    receipt_id = Column(Integer, ForeignKey(Receipt.id), nullable=False)
+    book_id = Column(Integer, ForeignKey(Book.id), nullable=True)
+    receipt_id = Column(Integer, ForeignKey(Receipt.id), nullable=True)
 
 
 class Comment(BaseModel):
     content = Column(String(255), nullable=False)
     created_date = Column(DateTime, default=datetime.now())
-    user_id = Column(Integer, ForeignKey(User.id), nullable=False)
+    user_id = Column(Integer, ForeignKey(User.id), nullable=True)
     book_id = Column(Integer, ForeignKey(Book.id), nullable=True)
 
 
