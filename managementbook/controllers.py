@@ -1,9 +1,12 @@
+import hashlib
+
 import cloudinary.uploader
 from flask import render_template, request, redirect, url_for, session, jsonify
 from flask_login import login_user, logout_user, login_required
 
-from managementbook import app, utils
+from managementbook import app, utils, db
 from managementbook.decorators import annonymous_user
+from managementbook.models import User
 
 
 def index():
@@ -41,20 +44,41 @@ def user_register():
         confirm = request.form.get('confirm-password')
         avatar_path = None
 
-        try:
-            if password.strip().__eq__(confirm.strip()):
-                avatar = request.files.get('avatar')
-                if avatar:
-                    res = cloudinary.uploader.upload(avatar)
-                    avatar_path = res['secure_url']
-
-                utils.add_user(name=name, username=username, phone=phone, password=password, email=email,
-                               avatar=avatar_path)
-                return redirect(url_for('index'))
+        if username:
+            user_by_username = User.query.filter(User.username.__eq__(username.strip())).first()
+            if user_by_username:
+                err_msg="Ten tai khoan da co nguoi su dung"
             else:
-                err_msg = "Xác nhận mật khẩu không đúng"
-        except Exception as ex:
-            err_msg = "Hệ thống đang có lỗi: " + str(ex)
+                try:
+                    if password.strip().__eq__(confirm.strip()):
+                        avatar = request.files.get('avatar')
+                        if avatar:
+                            res = cloudinary.uploader.upload(avatar)
+                            avatar_path = res['secure_url']
+
+                        utils.add_user(name=name, username=username, phone=phone, password=password, email=email,
+                                       avatar=avatar_path)
+                        return redirect(url_for('index'))
+                    else:
+                        err_msg = "Xác nhận mật khẩu không đúng"
+                except Exception as ex:
+                    err_msg = "Hệ thống đang có lỗi: " + str(ex)
+
+
+        # try:
+        #     if password.strip().__eq__(confirm.strip()):
+        #         avatar = request.files.get('avatar')
+        #         if avatar:
+        #             res = cloudinary.uploader.upload(avatar)
+        #             avatar_path = res['secure_url']
+        #
+        #         utils.add_user(name=name, username=username, phone=phone, password=password, email=email,
+        #                        avatar=avatar_path)
+        #         return redirect(url_for('index'))
+        #     else:
+        #         err_msg = "Xác nhận mật khẩu không đúng"
+        # except Exception as ex:
+        #     err_msg = "Hệ thống đang có lỗi: " + str(ex)
 
     return render_template('register.html', err_msg=err_msg)
 
@@ -68,8 +92,11 @@ def user_login():
 
         user = utils.check_user_login(username=username, password=password)
         if user:
-            login_user(user=user)
-            return redirect(url_for('index'))
+            if user.active:
+                login_user(user=user)
+                return redirect(url_for('index'))
+            elif not user.active:
+                err_msg = "Người dùng đã bị admin chặn"
         else:
             err_msg = "Tên đăng nhập hoặc mật khẩu không đúng"
     return render_template('login.html', err_msg=err_msg)

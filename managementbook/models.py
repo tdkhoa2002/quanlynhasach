@@ -52,7 +52,7 @@ class User(BaseModel, UserMixin):
     password = Column(String(50), nullable=False)
     avatar = Column(String(100))
     email = Column(String(50))
-    phone = Column(String(10), nullable=False, unique=True)
+    phone = Column(String(100), nullable=False)
     active = Column(Boolean, default=True)
     joined_date = Column(DateTime, default=datetime.now())
     user_role = Column(Enum(UserRole), default=UserRole.user)

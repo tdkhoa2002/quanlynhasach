@@ -8,6 +8,7 @@ import hashlib
 
 def add_user(name, username, phone, password, **kwargs):
     password = str(hashlib.md5(password.strip().encode('utf-8')).hexdigest())
+
     user = User(name=name.strip(),
                 username=username.strip(),
                 phone=phone.strip(),

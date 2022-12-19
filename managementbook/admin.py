@@ -4,7 +4,7 @@ from wtforms import TextAreaField
 from wtforms.widgets import TextArea
 
 from managementbook import db, app, utils
-from managementbook.models import Category, Book, User, UserRole
+from managementbook.models import Category, Book, User, UserRole, ReceiptDetails
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import AdminIndexView
 from flask_login import current_user, logout_user
@@ -82,8 +82,25 @@ class CategoryView(ModelView):
         return current_user.is_authenticated
 
 
+class UserView(ModelView):
+    can_export = True
+
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+
+class ReceiptDetailsView(ModelView):
+    can_export = True
+    form_columns = ['quantity', 'price', 'book', 'receipt']
+
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+
 admin = Admin(app=app, name='Nhà sách OU', template_mode='bootstrap4', index_view=MyAdminIndex())
 admin.add_view(CategoryView(Category, db.session, name="Danh mục"))
 admin.add_view(ProductView(Book, db.session, name="Thực hiện tác vụ sách"))
 admin.add_view(StatsView(name="Thống kê"))
+admin.add_view(UserView(User, db.session, name="Quản lý người dùng"))
+admin.add_view(ReceiptDetailsView(ReceiptDetails, db.session, name="Các hóa đơn"))
 admin.add_view(LogoutView(name="Đăng xuất"))
