@@ -10,6 +10,7 @@
               <div class="container py-5">
                 <div class="row">
                   {% for book in books %}
+                  {% if book.active %}
                   <div class="col-md-6 col-lg-4 mb-4 mb-md-5" >
                     <div class="card" style="height:530px;">
                       <img style="width: 350px; height:375px;" src="{{ book.image }}"
@@ -33,6 +34,7 @@
                       </div>
                     </div>
                   </div>
+                  {% endif %}
                   {% endfor %}
                 </div>
               </div>

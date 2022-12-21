@@ -1,10 +1,13 @@
+import pdb
+from datetime import datetime, timedelta
+
 from flask_admin import Admin, BaseView, expose
 import flask_login as login
 from wtforms import TextAreaField
 from wtforms.widgets import TextArea
 
 from managementbook import db, app, utils
-from managementbook.models import Category, Book, User, UserRole, ReceiptDetails
+from managementbook.models import Category, Book, User, UserRole, ReceiptDetails, Rule, Receipt
 from flask_admin.contrib.sqla import ModelView
 from flask_admin import AdminIndexView
 from flask_login import current_user, logout_user
@@ -26,6 +29,7 @@ class StatsView(BaseView):
         stats = utils.stats_revenue(kw=request.args.get('kw'),
                                     from_date=request.args.get('from_date'),
                                     to_date=request.args.get('to_date'))
+        # statsUserRegister = utils.
         return self.render('admin/stats.html', stats=stats)
 
     def is_accessible(self):
@@ -56,23 +60,15 @@ class CKTextAreaField(TextAreaField):
 
 
 class ProductView(ModelView):
-    column_searchable_list = ['name', 'description']
-    column_filters = ['name', 'price']
-    can_view_details = True
-    can_export = True
-    column_exclude_list = ['image']
-    column_labels = {
-        'name': 'Tên sản phẩm',
-        'description': 'Mô tả',
-        'price': 'Gía'
-    }
-    extra_js = ['//cdn.ckeditor.com/4.6.0/standard/ckeditor.js']
-    form_overrides = {
-        'description': CKTextAreaField
-    }
+
+    @expose('/')
+    def index(self):
+        books = utils.load_books()
+
+        return self.render('admin/product/products.html', books=books)
 
     def is_accessible(self):
-        return current_user.is_authenticated
+        return current_user.is_authenticated and current_user.user_role == UserRole.admin
 
 
 class CategoryView(ModelView):
@@ -89,9 +85,17 @@ class UserView(ModelView):
         return current_user.is_authenticated
 
 
-class ReceiptDetailsView(ModelView):
-    can_export = True
-    form_columns = ['quantity', 'price', 'book', 'receipt']
+class RuleView(ModelView):
+
+    def is_accessible(self):
+        return current_user.is_authenticated
+
+
+class ReceiptView(ModelView):
+    @expose('/')
+    def index(self):
+        receipts = utils.load_receipts()
+        return self.render('admin/receipt/receipts.html', receipts=receipts)
 
     def is_accessible(self):
         return current_user.is_authenticated
@@ -102,5 +106,6 @@ admin.add_view(CategoryView(Category, db.session, name="Danh mục"))
 admin.add_view(ProductView(Book, db.session, name="Thực hiện tác vụ sách"))
 admin.add_view(StatsView(name="Thống kê"))
 admin.add_view(UserView(User, db.session, name="Quản lý người dùng"))
-admin.add_view(ReceiptDetailsView(ReceiptDetails, db.session, name="Các hóa đơn"))
+admin.add_view(ReceiptView(Receipt, db.session, name="Các hóa đơn"))
+admin.add_view(RuleView(Rule, db.session, name="Quy định"))
 admin.add_view(LogoutView(name="Đăng xuất"))

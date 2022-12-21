@@ -23,7 +23,7 @@
                     {{ current_user.name }}
                 </a>
             </li>
-            {% if current_user.username == "admin" %}
+            {% if current_user.user_role.name == "admin" %}
             <li>
                 <a href="/admin">Admin page</a>
             </li>

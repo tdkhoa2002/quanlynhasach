@@ -1,8 +1,11 @@
+import pdb
+from datetime import datetime
+
 from flask_login import current_user
 from sqlalchemy import func
 
 from managementbook import db, app
-from managementbook.models import User, UserRole, Category, Book, Receipt, ReceiptDetails, Comment
+from managementbook.models import User, UserRole, Category, Book, Receipt, ReceiptDetails, Comment, Rule
 import hashlib
 
 
@@ -37,6 +40,10 @@ def stats_revenue(kw=None, from_date=None, to_date=None):
     return query.group_by(Book.id).order_by(-Book.id).all()
 
 
+# def stats_user_register():
+#     return User.query.filter(User.joined_date).group_by(User.joined_date)
+
+
 def count_product_by_cate():
     return db.session.query(Category.id, Category.name, func.count(Book.id)) \
         .join(Book, Book.category_id.__eq__(Category.id), isouter=True) \
@@ -61,7 +68,7 @@ def load_categories():
     return query.all()
 
 
-def load_books(category_id=None, keyword=None):
+def load_books(category_id=None, keyword=None):  # lay tat ca cac sach
     query = Book.query
 
     if category_id:
@@ -76,8 +83,16 @@ def get_product_by_id(product_id):
     return Book.query.get(product_id)
 
 
-# def get_product_by_category(category_id):
-#     return Book.query.filter_by(category_id=category_id).all()
+def get_rule_by_id(rule_id):
+    return Rule.query.get(rule_id)
+
+
+def load_receipts():
+    return Receipt.query.all()
+
+
+def get_receipt_by_id(receipt_id):
+    return Receipt.query.get(receipt_id)
 
 
 def cart_stats(cart):
@@ -104,7 +119,17 @@ def save_receipt(cart):
                                receipt=r, book_id=c['id'])
             db.session.add(d)
 
+            book = get_product_by_id(c['id'])
+            book.quantity -= c['quantity']
+
         db.session.commit()
+
+
+def save_book(name, price, quantity, description, author, image):
+    book = Book(name=name, price=price, quantity=quantity, description=description, author=author, image=image)
+
+    db.session.add(book)
+    db.session.commit()
 
 
 def load_comments(book_id):

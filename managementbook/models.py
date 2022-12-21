@@ -33,12 +33,13 @@ class Book(BaseModel):
 
     name = Column(String(100), nullable=False)
     price = Column(Float, default=0)
+    quantity = Column(Integer, default=300)
     description = Column(String(255))
     image = Column(String(200))
     author = Column(String(100), nullable=True)
     active = Column(Boolean, default=True)
     created_date = Column(DateTime, default=datetime.now())
-    category_id = Column(Integer, ForeignKey(Category.id), nullable=False)
+    category_id = Column(Integer, ForeignKey(Category.id), nullable=True)
     receipt_details = relationship('ReceiptDetails', backref='book', lazy=True)
     comments = relationship('Comment', backref='book', lazy=True)
 
@@ -78,6 +79,12 @@ class Comment(BaseModel):
     created_date = Column(DateTime, default=datetime.now())
     user_id = Column(Integer, ForeignKey(User.id), nullable=True)
     book_id = Column(Integer, ForeignKey(Book.id), nullable=True)
+
+
+class Rule(BaseModel):
+    name = Column(String(255), nullable=False)
+    value = Column(Integer)
+    unit = Column(String(255))
 
 
 if __name__ == '__main__':
@@ -143,6 +150,12 @@ if __name__ == '__main__':
         cmt2 = Comment(content='Xung dang de mua', user_id=1, book_id=1)
 
         db.session.add_all([cmt1, cmt2])
+        db.session.commit()
+
+        rule1 = Rule(name="Số lượng nhập tối thiểu", value=150, unit="Sách")
+        rule2 = Rule(name="Số lượng tồn tối thiểu", value=300, unit="Sách")
+        rule3 = Rule(name="Thời gian hủy đơn", value=48, unit="giờ")
+        db.session.add_all([rule1, rule2, rule3])
         db.session.commit()
 
 

@@ -44,3 +44,26 @@ const ctx = document.getElementById('revenueStats');
     }
   });
 }
+
+function drawUserRegisterChart(labels, data) {
+const ctx = document.getElementById('registerStats');
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Lượng người đăng ký',
+        data: data,
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+}

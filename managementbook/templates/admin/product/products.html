@@ -1,0 +1,38 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+<script src="https://kit.fontawesome.com/5b74b58050.js" crossorigin="anonymous"></script>
+<button class="btn btn-primary" type="submit">
+    <a style="color:white; text-decoration: none;" href="/admin/book/create/">Tạo sách</a>
+</button>
+<table class="table">
+    <tr>
+        <th>Image</th>
+        <th>Tên</th>
+        <th>Giá</th>
+        <th>Số lượng</th>
+        <th>Tác giả</th>
+        <th>Danh mục</th>
+        <th>Mô tả</th>
+        <th>Xóa</th>
+        <th>Sửa</th>
+    </tr>
+    {% for book in books %}
+    <tr>
+        <td><img src="{{ book.image }}" style="width:100px; height:100px;" alt=""></td>
+        <td>{{ book.name }}</td>
+        <td>{{ "{:,.0f}".format(book.price) }} VNĐ</td>
+        <td>{{ book.quantity }}</td>
+        <td>{{ book.author }}</td>
+        <td>{{ book.category }}</td>
+        <td>{{ book.description }}</td>
+        <td><a style="color:black;" href="/admin/book/delete/{{ book.id }}" ><i class="fa-solid fa-trash"></i></a></td></td>
+        <td><a style="color:black;" href="/admin/book/edit/{{ book.id }}" ><i class="fa-solid fa-pen"></i></a></td>
+    </tr>
+    {% endfor %}
+</table>
+
+
+{% endblock %}
+
+
